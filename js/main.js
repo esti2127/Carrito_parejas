@@ -37,7 +37,12 @@ formCarrito.addEventListener('submit', (ev) => {
 
 
 
+tablaProductos.addEventListener('click', (ev) => {
+  if (ev.target.matches('button')) {
+    restarProducto(ev.target.classList.value);
+  }
 
+});
 
 
 
@@ -58,8 +63,10 @@ const agregarProducto = productoElegido => {
     const productoNuevo = { nombre: productoElegido, cantidad: 1}
     //lo añadimos al final del array de los productos
     arrayProductos.push(productoNuevo);
+    aniadirFila(productoNuevo);
   } else {
     productoEncontrado.cantidad += 1;
+    tablaProductos.querySelector(`tr#${productoEncontrado.nombre}>td.celdaCantidad`).textContent = productoEncontrado.cantidad;
   }
 
   // almacenamos el valor de arrayProductos
@@ -88,11 +95,13 @@ const restarProducto = productoElegido => {
 
   if (productoEncontrado.cantidad === 1) {
     arrayProductos.splice(arrayProductos.indexOf(productoEncontrado), 1);
-
-    
+    // Al poner '' a outerHTML se borra el nodo, igual que remove() 
+    // tablaProductos.querySelector(`tr#${productoEncontrado.nombre}`).outerHTML = '';
+    tablaProductos.querySelector(`tr#${productoEncontrado.nombre}`).remove();
   }else {
-
+    
     productoEncontrado.cantidad -= 1;
+    tablaProductos.querySelector(`tr#${productoEncontrado.nombre}>td.celdaCantidad`).textContent = productoEncontrado.cantidad;
   }
 
   if(arrayProductos.length === 0) {
@@ -110,7 +119,13 @@ const restarProducto = productoElegido => {
   
 
 const crearTabla = () => {
-  arrayProductos.forEach(({nombre, cantidad}) => {
+  arrayProductos.forEach(producto => {
+    aniadirFila(producto);
+  });
+};
+
+
+const aniadirFila = ({nombre, cantidad}) => {
     const tr = document.createElement('tr');
     const tdNombre = document.createElement('td');
     const tdCantidad = document.createElement('td');
@@ -120,16 +135,18 @@ const crearTabla = () => {
     tr.id = nombre;
     tr.append(tdNombre, tdCantidad, tdQuitar);
     tdNombre.textContent = nombre;
+    tdNombre.classList.add('celdaNombre');
     tdCantidad.textContent = cantidad;
+    tdCantidad.classList.add('celdaCantidad');
     tdQuitar.append(botonQuitar);
     botonQuitar.textContent = '-';
+    botonQuitar.classList.add(nombre);
 
     fragmento.append(tr);
-  });
 
-  tablaProductos.append(fragmento);
+    tablaProductos.append(fragmento);
+
 };
-
 
 
 
