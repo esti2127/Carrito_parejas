@@ -1,10 +1,13 @@
 const formCarrito = document.querySelector('#formCarrito');
 const tipoProducto = document.querySelector('#tipoProducto');
-/*
-  Recogemos el valor de arrayProductos del localStorage,
-  si es null le asignamos array vacío con || [].
-*/
+const tablaProductos = document.querySelector('#tablaProductos>tbody');
+/**
+ * Recogemos el valor de arrayProductos del localStorage,
+ * si es null le asignamos array vacío con || [].
+ * @type {Array}
+ */
 const arrayProductos = JSON.parse(localStorage.getItem("arrayProductos")) || [];
+const fragmento = document.createDocumentFragment();
 
 
 
@@ -106,3 +109,28 @@ const restarProducto = productoElegido => {
 
   
 
+const crearTabla = () => {
+  arrayProductos.forEach(({nombre, cantidad}) => {
+    const tr = document.createElement('tr');
+    const tdNombre = document.createElement('td');
+    const tdCantidad = document.createElement('td');
+    const tdQuitar = document.createElement('td');
+    const botonQuitar = document.createElement('button');
+
+    tr.id = nombre;
+    tr.append(tdNombre, tdCantidad, tdQuitar);
+    tdNombre.textContent = nombre;
+    tdCantidad.textContent = cantidad;
+    tdQuitar.append(botonQuitar);
+    botonQuitar.textContent = '-';
+
+    fragmento.append(tr);
+  });
+
+  tablaProductos.append(fragmento);
+};
+
+
+
+
+crearTabla();
