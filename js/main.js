@@ -5,24 +5,41 @@ const tipoProducto = document.querySelector('#tipoProducto');
   si es null le asignamos array vacío con || [].
 */
 const arrayProductos = JSON.parse(localStorage.getItem("arrayProductos")) || [];
-console.log(arrayProductos);
 
 
 
 formCarrito.addEventListener('submit', (ev) => {
   //para prevenir que al clickar en submit los datos se manden directamente
   ev.preventDefault();
+
+  const botonPulsado = ev.submitter;
+
+  switch (botonPulsado.id) {
+    case "botonAniadir":
+      agregarProducto(tipoProducto.value); 
+      break;
+    case "botonQuitar":
+      restarProducto(tipoProducto.value);
+      break;
+    default: 
+      console.log("botón pulsado desconocido")
+  } 
+
   /*
     tipoProducto es un String. Hacemos referencia al producto elegido por el usuario y lo añadimos.
     (establece el valor de la opcion seleccionada)
   */
-  agregarProducto(tipoProducto.value);
+  
 });
 
 
 
 
-const agregarProducto = (productoElegido) => {
+
+
+
+
+const agregarProducto = productoElegido => {
   /*
     definimos el producto que cumplira la siguinete condición.
     En este caso, buscaremos en el array de los productos,
@@ -47,14 +64,45 @@ const agregarProducto = (productoElegido) => {
   localStorage.setItem("arrayProductos", JSON.stringify(arrayProductos));
 
 
-console.log(productoEncontrado)
+
     
 //console.log('entra');  
 //console.log(tipoProducto.value);
 
 
-console.log(agregarProducto)
 };
+
+const restarProducto = productoElegido => {
+
+  const productoEncontrado = arrayProductos.find(producto => { 
+    //el nombre del producto en la web y el producto elegido por el usuario coinciden 
+    return producto.nombre === productoElegido 
+  })
+
+  if(typeof productoEncontrado === "undefined" )  {
+    return
+  }
+
+  if (productoEncontrado.cantidad === 1) {
+    arrayProductos.splice(arrayProductos.indexOf(productoEncontrado), 1);
+
+    
+  }else {
+
+    productoEncontrado.cantidad -= 1;
+  }
+
+  if(arrayProductos.length === 0) {
+    localStorage.removeItem("arrayProductos")
+  }else{
+
+  localStorage.setItem("arrayProductos", JSON.stringify(arrayProductos));
+
+  }
+
+
+
+}
 
   
 
